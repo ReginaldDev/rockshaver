@@ -2,7 +2,7 @@
 describe('Pré-Cadastro', () => {
   it('Deve realizar o pré-cadastro do cliente', () => {
     const user = {
-      fullname: 'Bruno Teste',
+      nome: 'Bruno Teste',
       email: 'brunoteste@gmail.com'
     }
     
@@ -18,7 +18,7 @@ describe('Pré-Cadastro', () => {
 
   it('Não deve fazer o cadastro com o nome incompleto', () => {
     const user = {
-      fullname: 'Bruno',
+      nome: 'Bruno',
       email: 'brunoteste@gmail.com'
     }
 
@@ -28,7 +28,7 @@ describe('Pré-Cadastro', () => {
 
   it('Não deve fazer o cadastro com o e-mail incorreto', () => {
     const user = {
-      fullname: 'Bruno Teste',
+      nome: 'Bruno Teste',
       email: 'www.brunoteste.com'
     }
 
