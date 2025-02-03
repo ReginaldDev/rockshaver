@@ -1,8 +1,16 @@
 import calendario from '../fixtures/calendario.json'
-
+import agendamentos from '../fixtures/agendamentos.json'
 describe('Agendamento', () => {
     
+    beforeEach(function() {
+        cy.fixture('agendamentos').then((agendamentos) => {
+            this.agendamentos = agendamentos
+        })
+    })
+
     it('Deve fazer um novo agendamento', () => {
+  
+        const agendamento = agendamentos.sucesso
 
         cy.dropCollection('agendamentos', { failSilently: 'true' })
             .then(result => {
@@ -14,13 +22,9 @@ describe('Agendamento', () => {
            body: calendario
         }).as('getCalendario')
         
-        const user = {
-            nome: 'Bruno Teste',
-            email: 'brunoteste@gmail.com'
-        }
-    
-        cy.startPreRegistration(user)
-        cy.verifyPreRegistered(user)
+        
+        cy.startPreRegistration(agendamento.usuario)
+        cy.verifyPreRegistered(agendamento.usuario)
 
         //Clicando no botão de agendamento
         cy.get('a[href="/agendamento"]')
@@ -39,7 +43,7 @@ describe('Agendamento', () => {
         //Escolhendo o serviço e a data/horário
 
         //serviço
-        cy.contains('div', 'Combo')
+        cy.contains('div', agendamento.servico.descricao)
             .parent()
             .click()
 
@@ -50,9 +54,9 @@ describe('Agendamento', () => {
             .should('be.visible')
 
         //Data
-        cy.contains('.dia-semana', '5')
+        cy.contains('.dia-semana', agendamento.dia)
             .click()
-        cy.contains('.hora-opcao', '15:00')
+        cy.contains('.hora-opcao', agendamento.hora)
             .click()
         cy.contains('button', 'Confirmar e reservar')
             .click()

@@ -1,0 +1,15 @@
+{
+  "sucesso": {
+    "data": "05/02/2025",
+    "dia": "5",
+    "hora": "10:00",
+    "servico": {
+      "codigo": "3",
+      "descricao": "Combo"
+    },
+    "usuario": {
+      "nome": "Bruno Teste",
+      "email": "brunoteste@gmail.com"
+    }
+  }
+}
