@@ -1,20 +1,26 @@
+import calendario from '../fixtures/calendario.json'
+
 describe('Agendamento', () => {
-    beforeEach(() => {
-        const user = {
-            nome: 'Bruno Teste',
-            email: 'brunoteste@gmail.com'
-        }
-
-        cy.startPreRegistration(user)
-        cy.verifyPreRegistered(user)
-    })
-
+    
     it('Deve fazer um novo agendamento', () => {
 
         cy.dropCollection('agendamentos', { failSilently: 'true' })
             .then(result => {
                 cy.log(result);
-            });
+        });
+
+        cy.intercept('GET', 'http://localhost:3333/api/calendario', {
+           statusCode: 200,
+           body: calendario
+        }).as('getCalendario')
+        
+        const user = {
+            nome: 'Bruno Teste',
+            email: 'brunoteste@gmail.com'
+        }
+    
+        cy.startPreRegistration(user)
+        cy.verifyPreRegistered(user)
 
         //Clicando no botão de agendamento
         cy.get('a[href="/agendamento"]')
@@ -27,7 +33,7 @@ describe('Agendamento', () => {
         cy.contains('div', 'Tina')
             .parent()
             .click()
-        //CHECPOINT    
+        //CHECKPOINT    
         cy.contains('span', 'Serviços')
             .should('be.visible')
         //Escolhendo o serviço e a data/horário
@@ -44,7 +50,7 @@ describe('Agendamento', () => {
             .should('be.visible')
 
         //Data
-        cy.contains('.dia-semana', '31')
+        cy.contains('.dia-semana', '5')
             .click()
         cy.contains('.hora-opcao', '15:00')
             .click()
