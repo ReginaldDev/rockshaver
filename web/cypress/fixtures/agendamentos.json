@@ -7,7 +7,6 @@
       "nome": "Tina",
       "matricula": 1003
     },
-    
     "servico": {
       "codigo": "3",
       "descricao": "Combo"
@@ -17,7 +16,23 @@
       "email": "brunoteste@gmail.com"
     }
   },
-  "conflito": {},
+  "conflito": {
+    "data": "07/02/2025",
+    "dia": "7",
+    "hora": "16:00",
+    "profissional": {
+      "nome": "Jimi",
+      "matricula": 1006
+    },
+    "servico": {
+      "codigo": "1",
+      "descricao": "Corte"
+    },
+    "usuario": {
+      "nome": "David Bowie",
+      "email": "david@gmail.com"
+    }
+  },
   "duplicado": {
     "data": "06/02/2025",
     "dia": "6",
@@ -26,7 +41,6 @@
       "nome": "Kurt",
       "matricula": 1008
     },
-    
     "servico": {
       "codigo": "1",
       "descricao": "Corte"

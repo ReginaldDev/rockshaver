@@ -2,23 +2,23 @@ import calendario from '../fixtures/calendario.json'
 import agendamentos from '../fixtures/agendamentos.json'
 
 describe('Agendamento', () => {
-    it('Deve fazer um novo agendamento', () => {
-        const agendamento = agendamentos.sucesso
 
-        cy.dropCollection('agendamentos', { failSilently: 'true' })
-            .then(result => {
-                cy.log(result);
-            });
-
+    beforeEach(()=>{
         cy.intercept('GET', 'http://localhost:3333/api/calendario', {
             statusCode: 200,
             body: calendario
         }).as('getCalendario')
+    })
 
-        cy.startPreRegistration(agendamento.usuario)
-        cy.verifyPreRegistered(agendamento.usuario)
+    it('Deve fazer um novo agendamento', () => {
+        const agendamento = agendamentos.sucesso
 
+        cy.deleteMany({ emailCliente: agendamento.usuario.email }, {collection:'agendamentos'}).then(result => {
+            cy.log(result);
+        });
 
+        cy.preCadastroLS(agendamento.usuario)
+        
         cy.iniciarAgendamento()
         cy.escolherProfissional(agendamento.profissional.nome)
         cy.selecionarServico(agendamento.servico.descricao)
@@ -34,17 +34,33 @@ describe('Agendamento', () => {
     it('Deve mostrar o slot ocupado', () => {
         const agendamento = agendamentos.duplicado
 
-        cy.dropCollection('agendamentos', { failSilently: 'true' })
-            .then(result => {
-                cy.log(result);
-            });
+        cy.deleteMany({ emailCliente: agendamento.usuario.email }, {collection:'agendamentos'}).then(result => {
+            cy.log(result);
+        });
 
         cy.agendamentoApi(agendamento)
 
-        cy.intercept('GET', 'http://localhost:3333/api/calendario', {
-            statusCode: 200,
-            body: calendario
-        }).as('getCalendario')
+        cy.startPreRegistration(agendamento.usuario)
+        cy.verifyPreRegistered(agendamento.usuario)
+
+        cy.iniciarAgendamento()
+        cy.escolherProfissional(agendamento.profissional.nome)
+        cy.selecionarServico(agendamento.servico.descricao)
+        cy.escolherDiaAgendamento(agendamento.dia)
+
+        cy.get(`[slot="${agendamento.hora} - ocupado"]`)
+            .should('be.visible')
+            .find('svg')
+            .should('be.visible')
+            .and('have.css', 'color', 'rgb(255, 255, 255)')
+    })
+
+    it('Deve retornar uma notificação no sumário em caso de conflito de disponibilidade', () => {
+        const agendamento = agendamentos.conflito
+
+        cy.deleteMany({ emailCliente: agendamento.usuario.email }, {collection:'agendamentos'}).then(result => {
+            cy.log(result);
+        });
 
         cy.startPreRegistration(agendamento.usuario)
         cy.verifyPreRegistered(agendamento.usuario)
@@ -54,11 +70,13 @@ describe('Agendamento', () => {
         cy.escolherProfissional(agendamento.profissional.nome)
         cy.selecionarServico(agendamento.servico.descricao)
         cy.escolherDiaAgendamento(agendamento.dia)
-        
-        cy.get(`[slot="${agendamento.hora} - ocupado"]`)
+        cy.escolherHorarioAgendamento(agendamento.hora)
+
+        cy.agendamentoApi(agendamento)
+        cy.finalizarAgendamento()
+
+        cy.get('.alert-error')
             .should('be.visible')
-            .find('svg')
-            .should('be.visible')
-            .and('have.css', 'color', 'rgb(255, 255, 255)')
+            .and('have.text', 'Já existe um agendamento para esta data e hora. Por favor, escolha outro horário.')
     })
 })
